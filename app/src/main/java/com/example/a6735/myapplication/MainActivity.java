@@ -9,8 +9,10 @@ import android.widget.Button;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -89,16 +91,21 @@ public class MainActivity extends AppCompatActivity {
     /*新的方式*/
     private void new_send() {
         AndroidNetworking.initialize(getApplicationContext());
+
+        UserProto.User uproto = UserProto.User.newBuilder().setID(147258369)
+                .setPassword("123456").setUserName("jerome").build();
+        byte[] content = uproto.toByteArray();
+
         AndroidNetworking.post("192.168.1.103")
                 .addBodyParameter("firstname", "Amit")
                 .addBodyParameter("lastname", "Shekhar")
+                .addByteBody(content)
                 .setTag("test")
                 .setPriority(Priority.MEDIUM)
                 .build()
-                .
-                .getAsJSONObject(new JSONObjectRequestListener() {
+                .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
                         // do anything with response
                     }
                     @Override
@@ -107,9 +114,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    
+
 //    MobadsRequest adrequest = MobadsRequest.newBuilder().setRequestId(requestId).setAdslot(adslot).build();
-//    byte[] content = adrequest.toByteArray(); HttpClient client = new HttpClient();
+//    byte[] content = adrequest.toByteArray();
+//    HttpClient client = new HttpClient();
 //    PostMethod postMethod = new PostMethod(URL);
 //    postMethod.addRequestHeader("Content-Type", "application/octet-stream;charset=utf-8");
 //    postMethod.setRequestEntity(new ByteArrayRequestEntity(content ));
