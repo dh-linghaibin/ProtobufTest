@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 //网络请求必须在线程中完成
                 new  Thread() {
                     public void run() {
-                        //send_text();
+                       // send_text();
                         new_send();
                     }
                 }.start();
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < count; i++) {
                             temp[i] = len[i];
                         }
-
+                        System.out.println(temp);
                         UserProto.User user = UserProto.User.parseFrom(temp);
                         Log.i("zwq","id:"+user.getID() + "____" + user.getUserName()
                                 + "____" + user.getPassword());
@@ -97,43 +97,49 @@ public class MainActivity extends AppCompatActivity {
     }
     /*新的方式*/
     private void new_send() {
-        //AndroidNetworking.initialize(getApplicationContext());
-
-        UserProto.User uproto = UserProto.User.newBuilder().setID(147258369)
-                .setPassword("123456").setUserName("jerome").build();
+        UserProto.User uproto = UserProto.User.newBuilder().setID(1234)
+                .setPassword("7758258").setUserName("客户端").build();
         byte[] content = uproto.toByteArray();
 
-//        AndroidNetworking.post("http://192.168.1.103:8080/HttpTest/")
-//                //.addBodyParameter("firstname", "Amit")
-//                //.addBodyParameter("lastname", "Shekhar")
-//                .addByteBody(content)
-//                .setTag("test")
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONArray(new JSONArrayRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        // do anything with response
-//                    }
-//                    @Override
-//                    public void onError(ANError error) {
-//                        // handle error
-//                    }
-//                });
         try {
-            URL httpUrl = new URL("http://192.168.1.103:8080/HttpTest");
+            URL httpUrl = new URL("http://192.168.1.103:8080/lhb/Myservlet");
             HttpURLConnection conn = (HttpURLConnection)httpUrl.openConnection();
             conn.setRequestMethod("POST");
             conn.setReadTimeout(5000);
             OutputStream out = conn.getOutputStream();
             String TTT="name=123&age=789";
-            out.write(TTT.getBytes());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuffer sb = new StringBuffer();
-            String str;
-            while ((str=reader.readLine())!=null) {
-                sb.append(str);
+            //out.write(TTT.getBytes());
+            out.write(uproto.toByteArray());
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            String str;
+//            StringBuffer sb = new StringBuffer();
+//            while ((str=reader.readLine())!=null) {
+//                sb.append(str);
+//            }
+//            byte[] ss = sb.toString().getBytes();
+//            //ss = content;
+//            System.out.println("name----"+content);
+//            System.out.println("name----"+ss);
+//            UserProto.User user = UserProto.User.parseFrom(sb.toString().getBytes());
+//            System.out.println(user.getID());
+//            System.out.println(user.getUserName());
+//            System.out.println(user.getPassword());
+            InputStream inputStream = conn.getInputStream();
+            if(null != inputStream) {
+                byte len[] = new byte[1024];
+                int count = inputStream.read(len);
+                byte[] temp = new byte[count];
+                for (int i = 0; i < count; i++) {
+                    temp[i] = len[i];
+                }
+                System.out.println("name----"+content);
+                System.out.println("name----"+temp);
+                UserProto.User user = UserProto.User.parseFrom(temp);
+                Log.i("zwq","id:"+user.getID() + "____" + user.getUserName()
+                        + "____" + user.getPassword());
             }
+           // Log.i("zwq","id:"+user.getID() + "____" + user.getUserName()
+              //      + "____" + user.getPassword());
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -143,13 +149,30 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    /*新的方式2*/
+    private void new_send_2() {
+        AndroidNetworking.initialize(getApplicationContext());
 
-//    MobadsRequest adrequest = MobadsRequest.newBuilder().setRequestId(requestId).setAdslot(adslot).build();
-//    byte[] content = adrequest.toByteArray();
-//    HttpClient client = new HttpClient();
-//    PostMethod postMethod = new PostMethod(URL);
-//    postMethod.addRequestHeader("Content-Type", "application/octet-stream;charset=utf-8");
-//    postMethod.setRequestEntity(new ByteArrayRequestEntity(content ));
-//    client.executeMethod(postMethod);
-    //注意content-type 设置为application/octet-stream。
+        UserProto.User uproto = UserProto.User.newBuilder().setID(1234)
+                .setPassword("7758258").setUserName("linghaibin").build();
+        byte[] content = uproto.toByteArray();
+
+        AndroidNetworking.post("http://192.168.1.103:8080/lhb/Myservlet")
+        //.addBodyParameter("firstname", "Amit")
+        //.addBodyParameter("lastname", "Shekhar")
+        .addByteBody(content)
+        .setTag("test")
+        .setPriority(Priority.MEDIUM)
+        .build()
+        .getAsJSONArray(new JSONArrayRequestListener() {
+            @Override
+            public void onResponse(JSONArray response) {
+                // do anything with response
+            }
+            @Override
+            public void onError(ANError error) {
+                // handle error
+            }
+        });
+    }
 }
